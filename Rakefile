@@ -15,6 +15,7 @@ spec = Gem::Specification.new do |s|
   s.files            = %w(README.rdoc Rakefile) + Dir.glob("{lib,test}/**/*")
 
   s.add_dependency('capistrano', '>=2.1.0')
+  s.add_dependency('parallel', '>=0.0.0')
 end
 
 Rake::GemPackageTask.new(spec) do |pkg|

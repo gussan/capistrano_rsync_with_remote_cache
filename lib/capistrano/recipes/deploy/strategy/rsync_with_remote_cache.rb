@@ -1,5 +1,6 @@
 require 'capistrano/recipes/deploy/strategy/remote'
 require 'fileutils'
+require 'parallel'
 
 module Capistrano
   module Deploy
@@ -37,6 +38,13 @@ module Capistrano
         def update_remote_cache
           finder_options = {:except => { :no_release => true }}
           find_servers(finder_options).each {|s| system(rsync_command_for(s)) }
+        end
+
+        def update_remote_cache
+          finder_options = {:except => { :no_release => true }}
+          Parallel.map(find_servers(finder_options), :in_threads => 8) do |s|
+            system(rsync_command_for(s))
+          end
         end
         
         def copy_remote_cache
