@@ -23,6 +23,7 @@ module Capistrano
         default_attribute :rsync_options, '-az --delete'
         default_attribute :local_cache, '.rsync_cache'
         default_attribute :repository_cache, 'cached-copy'
+        default_attribute :rsync_concurrency, 8
 
         def deploy!
           update_local_cache
@@ -42,7 +43,7 @@ module Capistrano
 
         def update_remote_cache
           finder_options = {:except => { :no_release => true }}
-          Parallel.map(find_servers(finder_options), :in_threads => 8) do |s|
+          Parallel.map(find_servers(finder_options), :in_threads => rsync_concurrency) do |s|
             system(rsync_command_for(s))
           end
         end
