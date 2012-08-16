@@ -1,5 +1,9 @@
 = Capistrano rsync_with_remote_cache Deployment Strategy
 
+== Changes in this fork
+* Parallelize rsync
+* Raise Exception on repository sync failure.
+
 == Description
 
 This gem provides a deployment strategy for Capistrano which combines the
