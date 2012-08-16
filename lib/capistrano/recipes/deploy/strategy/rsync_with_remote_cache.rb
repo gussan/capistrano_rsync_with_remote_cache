@@ -32,21 +32,20 @@ module Capistrano
           copy_remote_cache
         end
 
+        def system!(command)
+          system(command) or raise RuntimeError.new("Command exit with non zero status: #{command}")
+        end
+
         def update_local_cache
-          system(command)
+          system!(command)
           mark_local_cache
         end
 
         def update_remote_cache
           finder_options = {:except => { :no_release => true }}
-          find_servers(finder_options).each {|s| system(rsync_command_for(s)) }
-        end
-
-        def update_remote_cache
-          finder_options = {:except => { :no_release => true }}
           Parallel.map(find_servers(finder_options), :in_threads => rsync_concurrency) do |s|
-            system(rsync_command_for(s))
-          end
+            system!(rsync_command_for(s))
+          end.all?
         end
 
         def copy_remote_cache
